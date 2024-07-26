@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcel Delivery Tracking System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold mb-4">Parcel Delivery Tracking System</h1>
+
+        
+
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-2">Fetch Parcels by Delivery Date</h2>
+            <form id="fetch-parcels-form" class="bg-white p-4 rounded shadow-md">
+                <div class="mb-4">
+                    <label for="delivery-date" class="block text-sm font-medium text-gray-700">Delivery Date</label>
+                    <input type="date" id="delivery-date" name="delivery_date"
+                        class="mt-1 p-2 block w-full border border-gray-300 rounded-md">
+                </div>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Fetch Parcels</button>
+            </form>
+        </div>
+
+    
+        <div id="results" class="mt-8">
+            <h2 class="text-xl font-semibold mb-2">Results</h2>
+            <div id="results-container" class="bg-white p-4 rounded shadow-md"></div>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="text-xl font-semibold mb-2">Create Parcels </h2>
+        <form id="fetch-parcels-form" class="bg-white p-4 rounded shadow-md">
+            <div class="mb-4">
+                <label for="parcelId" class="block text-sm font-medium text-gray-700">Parcel Id</label>
+                <input type="text" id="parcelId" name="parcelId"
+                    class="mt-1 p-2 block w-full border border-gray-300 rounded-md">
+                    <label for="sender_name" class="block text-sm font-medium text-gray-700">Sender Name</label>
+                    <input type="text" id="sender_name" name="sender_name"
+                        class="mt-1 p-2 block w-full border border-gray-300 rounded-md">
+                        <label for="receiver_name" class="block text-sm font-medium text-gray-700">Receiver Name</label>
+                        <input type="text" id="receiver_name" name="receiver_name"
+                            class="mt-1 p-2 block w-full border border-gray-300 rounded-md">
+                            <label for="dispatch_date" class="block text-sm font-medium text-gray-700">Dispatch Date</label>
+                            <input type="text" id="dispatch_date" name="dispatch_date"
+                                class="mt-1 p-2 block w-full border border-gray-300 rounded-md">
+                                <label for="delivery-date" class="block text-sm font-medium text-gray-700">Delivery Date</label>
+                            <input type="text" id="delivery-date" name="delivery-date"
+                                class="mt-1 p-2 block w-full border border-gray-300 rounded-md">
+            </div>
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Create Parcel</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('fetch-parcels-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const date = document.getElementById('delivery-date').value;
+            const response = await fetch(`/api/parcels/delivery_date?date=${date}`);
+            const parcels = await response.json();
+            const resultsContainer = document.getElementById('results-container');
+            resultsContainer.innerHTML = ''; 
+
+            if (parcels.length > 0) {
+                parcels.forEach(parcel => {
+                    const parcelDiv = document.createElement('div');
+                    parcelDiv.classList.add('p-4', 'border', 'border-gray-300', 'rounded-md', 'mb-2');
+                    parcelDiv.innerHTML = `
+                        <p><strong>Parcel ID:</strong> ${parcel.parcelId}</p>
+                        <p><strong>Sender Name:</strong> ${parcel.sender_name}</p>
+                        <p><strong>Receiver Name:</strong> ${parcel.receiver_name}</p>
+                        <p><strong>Dispatch Date:</strong> ${new Date(parcel.dispatch_date).toLocaleDateString()}</p>
+                        <p><strong>Delivery Date:</strong> ${new Date(parcel.delivery_date).toLocaleDateString()}</p>
+                    `;
+                    resultsContainer.appendChild(parcelDiv);
+                });
+            } else {
+                resultsContainer.innerHTML = '<p>No parcels found for the selected date.</p>';
+            }
+        });
+    </script>
+
+</body>
+
+</html>
